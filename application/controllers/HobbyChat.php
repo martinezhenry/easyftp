@@ -5,7 +5,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+ header('Content-type: application/json; charset=utf-8');
 class HobbyChat extends CI_Controller {
     
     public function __construct() {
@@ -124,13 +124,13 @@ class HobbyChat extends CI_Controller {
        // var_dump($_POST);
        // 
        // 
-        header('Content-type: application/json; charset=utf-8');
+       
         $datos = $this->input->post('dat');
         
         
         
-        $datos['key'] = $this->encrypt->encode($datos['key']);
-        $datos['message'] = $this->encrypt->encode($datos['message']);
+       // $datos['key'] = $this->encrypt->encode($datos['key']);
+        $datos['contenido'] = $this->encrypt->encode($datos['contenido']);
         
         if ($this->Hobbychat_model->sendMessage($datos)){
             
@@ -155,7 +155,7 @@ class HobbyChat extends CI_Controller {
     
     
     
-    public function receive() {
+    public function receive($idchat, $usuario) {
                if ($_SERVER['REQUEST_METHOD'] != "GET"){
             $resp = array(
                 
@@ -166,13 +166,24 @@ class HobbyChat extends CI_Controller {
             echo json_encode($resp);
             exit();
         }
-        $message = $this->Hobbychat_model->receiveMessage();
+        $message = $this->Hobbychat_model->receiveMessage($idchat, $usuario);
         
-        $message = $this->encrypt->decode($message);
+       // print_r($message);
+        
+        for ($i = 0; $i < count($message); $i++ ) {
+            
+        $message[$i]['contenido'] = $this->encrypt->decode($message[$i]['contenido']);
+            
+        }
+            
+            //$message = $this->encrypt->decode($value);
+        
+        // print_r($message);
         
         $resp = array(
-            'resp' => 200,
-            'msg' => ['message' => $message]
+            'status' => 200,
+            'msg' => 'success',
+            'data' => $message
         );
         
         echo json_encode($resp);

@@ -53,7 +53,7 @@ class Usuario_model extends CI_Model {
     public function updateUser($id, $datos) {
 
 
-        $str_campos = "";
+       /* $str_campos = "";
         $i = 0;
         foreach ($datos as $key => $value) {
             ($i > 0) ? $final = ', ' : $final = '';
@@ -71,7 +71,15 @@ class Usuario_model extends CI_Model {
             $this->errorMessage = $this->display_error();
             $this->errorCode = $this->db->_error_number();
             return FALSE;
-            }
+            }*/
+        
+        $this->db->where('idusuario', $id);
+        if ($this->db->update('usuario', $datos)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+        
     }
 
     public function getUser($id = null) {

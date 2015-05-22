@@ -41,16 +41,33 @@ class Hobbychat_model extends CI_Model {
     public function sendMessage($datos) {
         
       //  $sql = "insert into chats (key, message) values ('" .$datos['key']. "', '" .$datos['msg']. "')";
-        $this->db->insert('chats', $datos);
+        $this->db->insert('messages', $datos);
        return ($this->db->affected_rows() > 0) ? true : false; 
     }
     
     
-    public function receiveMessage() {
+    public function receiveMessage($idchat, $idusuario) {
         
-        $query = $this->db->query("select message from chats limit 1");
-        $row = $query->row();
-        return $row->message;
+        $query = $this->db->query("select a.idmessages, a.contenido from messages a where "
+                . " a.status = 'E' and a.chats_idchats = '$idchat' and a.idusuario_envio <> $idusuario ");
+        
+        if ($query->num_rows() > 0){
+            
+            foreach ($query->result() as $row) {
+                $data = array(
+                    'status' => 'R'
+                );
+              //  $this->db->where('idmessages', $row->idmessages);
+               // $this->db->update('messages', $data);
+                
+            }
+            $filas = $query->result_array();
+        //$row = $query->row();
+        return $filas;
+        } else {
+            return false;
+        }
+        
     }
 
 }

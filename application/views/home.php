@@ -17,6 +17,7 @@
             <div class="body caja">
 
                 <form name="form-msg">
+                    <div><p>Usuario</p> <input required="" id="usuario" type="text" /></div>
                     <div><p>key</p> <input required="" name="yek" type="password" /> <a id="onkey" href="#">Establecer llave</a></div>
                     <div id="tahc"></div>
                     <div><p>Message</p> <input name="msg" type="text" /></div>
@@ -24,12 +25,14 @@
                 </form>
 
                 <div id="ot"><a id="addUser" href="#">add User</a>
-                <a id="deleteUser" href="#">delete User</a></div>
+                <a id="deleteUser" href="#">delete User</a>
+                <a id="updateUser" href="#">update User</a></div>
                 
             </div>
 <?php require_once 'global/footer.php'; ?>
         </div>
     <msg-per></msg-per>
+    <yek-id></yek-id>
 </body>
 
 
