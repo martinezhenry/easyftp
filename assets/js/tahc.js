@@ -6,8 +6,7 @@
 
 
 $(document).ready(function () {
-
-    //$('msg-per').val('primero');
+       
     var fStart = $.now();
 
 
@@ -18,6 +17,7 @@ $(document).ready(function () {
     $('input[name="msg"]').attr('id');
     $('#' + $.rc4EncryptStr('form-msg', fStart.toString())).attr('action', 'enviar');
     $('#' + $.rc4EncryptStr('form-msg', fStart.toString())).attr('method', 'post');
+    $('#' + $.rc4EncryptStr('form-msg', fStart.toString())).hide();
 
     $('#' + $.rc4EncryptStr('form-msg', fStart.toString())).submit(function (event) {
         // alert($('#'+$.rc4EncryptStr('yek', fStart.toString())).val());
@@ -35,9 +35,9 @@ $(document).ready(function () {
         //alert($.base64.encode($('msg-per').val()));
         $.ajax({
             type: 'post',
-            url: 'http://sysethical.com/easyftp/hobbychat/send',
+            url: 'hobbychat/send',
             dataType: 'json',
-            data: {'dat': { 'contenido': $.base64.encode($('msg-per').val()), 'chats_idchats' : '1', 'idusuario_envio' : $('#usuario').val()}}
+            data: {'dat': { 'contenido': $.base64.encode($('msg-per').val()), 'chats_idchats' : '1', 'idusuario_envio' : $('#user-cod').val()}}
 
         }).done(function (resp) {
 
@@ -48,6 +48,7 @@ $(document).ready(function () {
 
           //  alert(resp.msg);
             $('#tahc').append('<div>' + $('input[name="msg"]').val() + '</div>');
+            
 
 
         }).fail(function (resp) {
@@ -59,6 +60,44 @@ $(document).ready(function () {
 
         return false;
 
+    });
+    
+    $('#form-login').submit(function(){
+       
+       $('#form-login input[name="clave"]').val($.md5($('#form-login input[name="clave"]').val()));
+       $.ajax({
+           
+           type : 'post',
+           url : 'usuario/login',
+           dataType : 'json',
+           data : { user : $('#form-login input[name="user"]').val(), pass : $.base64.encode($('#form-login input[name="clave"]').val()) }
+           
+       }).done(function(resp){
+          
+         // alert(resp);
+          
+          if (resp.status == 200){
+              $('#user-label').html($('#form-login input[name="user"]').val());
+            //  alert(resp.datos[0]['idusuario']);
+              $('#user-cod').val(resp.datos[0]['idusuario']);
+              $('#' + $.rc4EncryptStr('form-msg', fStart.toString())).show('slow');
+              $('#form-login input[name="clave"]').attr('disabled', '');
+              $('#form-login input[name="name"]').attr('disabled', '');
+              $('#form-login').hide('slow');
+          } else {
+              
+              alert(resp.msg);
+              $('#form-login input[name="clave"]').val('');
+          }
+          
+       
+       }).fail(function (){
+           
+           alert('error ajax');
+           
+       });
+        return false;
+        
     });
     
     
@@ -80,6 +119,12 @@ $(document).ready(function () {
        updateUser();
         
     });
+    
+    $('#logout').click(function(){
+       
+       logout();
+        
+    });
 
 
 
@@ -91,16 +136,39 @@ $(document).ready(function () {
 
 
 
-
+    function logout(){
+        
+        $.ajax({
+            
+            type : 'put',
+            url: 'usuario/logout/1',
+            dataType: 'json'
+            
+        }).done(function(resp){
+            
+            alert(resp.msg);
+            
+        }).fail(function(){
+            
+            alert('fail ajax');
+        });
+        
+        
+    }
 
     function onKey(id) {
 
         var v = $('#' + id).val();
+        
+        if ($('#' + id).val() == ""){
+            return false;
+        }
+        
         $('#' + id).val($.base64.encode($.rc4EncryptStr($('#' + id).val(), fStart.toString())));
 
         $.ajax({
             type: 'post',
-            url: 'http://sysethical.com/easyftp/key/savekey',
+            url: 'key/savekey',
             typeData : 'json',
             data: { 'dat' : {
                     'key_utilizada': $.base64.encode(v),
@@ -149,7 +217,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'put',
-            url: 'http://sysethical.com/easyftp/key/freekey/'+$('yek-id').val()
+            url: 'key/freekey/'+$('yek-id').val()
 
 
         }).done(function (resp) {
@@ -187,7 +255,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'get',
-            url: 'http://sysethical.com/easyftp/hobbychat/receive/1/'+$('#usuario').val(),
+            url: 'hobbychat/receive/1/'+$('#user-cod').val(),
             dataType: 'json'
 
 
@@ -235,7 +303,7 @@ $(document).ready(function () {
             
             type : 'post',
             dataType : 'json',
-            url : 'http://sysethical.com/easyftp/usuario/addUser',
+            url : 'usuario/addUser',
             data : { 'dat' : { 'name' : 'Henry Martínez',
                                'user' : 'martinezherny2',
                                'email': 'hmartinez@sistemashm.com2',
@@ -262,8 +330,8 @@ $(document).ready(function () {
             
             type : 'put',
             dataType : 'json',
-            url : 'http://sysethical.com/easyftp/usuario/updateUser/1',
-            data : { 'dat' : { 'name' : 'Henry Martínez 2',
+            url : 'usuario/updateUser/1',
+            data : { 'dat' : { 'name' : 'Henry Martínez',
                                'user' : 'martinezhenry',
                                'email': 'hmartinez@sistemashm.com',
                                'pass' : '123456'
@@ -287,7 +355,7 @@ $(document).ready(function () {
             
             type : 'delete',
             dataType : 'json',
-            url : 'http://sysethical.com/easyftp/usuario/deleteUser/16'
+            url : 'usuario/deleteUser/16'
            // data : { 'dat' : { 'idusuario' : '16'
                                
                     

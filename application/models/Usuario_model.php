@@ -94,6 +94,27 @@ class Usuario_model extends CI_Model {
         }
     }
     
+    
+    function login($user, $pass) {
+        
+        $sql = "select idusuario from usuario where user = '$user' and pass = '$pass'";
+ 
+        $query = $this->db->query($sql);
+         return $query->result_array();
+
+        
+    }
+    
+    
+    public function logout($iduser) {
+        
+        $datos = array('login' => 'I');
+        
+        $this->db->where('idusuario', $iduser);
+        ($this->db->update('usuario', $datos)) ? TRUE : FALSE;
+        
+    }
+    
     function getErrorMessage() {
         return $this->errorMessage;
     }

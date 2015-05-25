@@ -77,6 +77,9 @@ class Usuario extends CI_Controller {
         // exit();
         // $datos = $this->limpiarEntrada($this->datosPeticion); 
         // $datos = $this->input->delete('dat');
+         
+         $datos['dat']['pass'] = md5($datos['dat']['pass']);
+         
         if ($this->Usuario_model->updateUser($id, $datos['dat'])){
             
            echo json_encode($this->Messages_model->getMessage(200));
@@ -114,6 +117,71 @@ class Usuario extends CI_Controller {
            exit();
             
         }
+        
+        
+    }
+    
+    
+    public function login() {
+         if ($_SERVER['REQUEST_METHOD'] != "POST") {
+
+            echo json_encode($this->Messages_model->getMessage(300));
+            exit();
+            
+        }
+        
+        $user = $this->input->post('user');
+        $pass = $this->input->post('pass');
+        
+
+        
+        if (!isset($user) || $user == "" || !isset($pass) || $pass == ""){
+            echo json_encode($this->Messages_model->getMessage(500));
+            exit();
+        }
+        
+ 
+        $datos = $this->Usuario_model->login($user, base64_decode($pass));
+   
+        if (!$datos){
+          echo json_encode($this->Messages_model->getMessage(150, 'login invalido'));
+          exit();
+            
+        } else {
+      
+           $resp = $this->Messages_model->getMessage(200);
+           $resp['datos'] = $datos;
+           echo json_encode($resp);
+           exit();
+        }
+        
+        
+        
+    }
+    
+    
+    public function logout($iduser) {
+        
+          if ($_SERVER['REQUEST_METHOD'] != "PUT") {
+
+            echo json_encode($this->Messages_model->getMessage(300));
+            exit();
+            
+        }
+       
+        if ($this->Usuario_model->logout($iduser)){
+    
+            
+            echo  $this->Messages_model->getMessage(200);
+
+        } else {
+ 
+            echo json_encode($this->Messages_model->getMessage(150, 'no se realizo logout'));
+          exit();
+            
+            
+        }
+        
         
         
     }
