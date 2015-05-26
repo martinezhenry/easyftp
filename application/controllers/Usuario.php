@@ -155,8 +155,6 @@ class Usuario extends CI_Controller {
            exit();
         }
         
-        
-        
     }
     
     
